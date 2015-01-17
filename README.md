@@ -10,6 +10,7 @@ Completed user stories:
  * [x] Required: User can delete an item from the list
  * [x] Required: The list is persisted in the app so its saved even if user closes the app
  * [x] Optional: The app icon is updated
+ * [x] Optional: Edit an item in list using a DialogFragment
 
  
 Notes:
