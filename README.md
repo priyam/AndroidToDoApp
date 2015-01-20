@@ -19,6 +19,6 @@ Notes:
 
 Walkthrough of all user stories:
 
-![Video Walkthrough](demo-todo-app1.gif)
+![Video Walkthrough](demo-todo-app.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
