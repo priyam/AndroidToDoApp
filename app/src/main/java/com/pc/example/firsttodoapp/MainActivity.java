@@ -1,13 +1,5 @@
 package com.pc.example.firsttodoapp;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.apache.commons.io.FileUtils;
-
-import com.pc.example.firsttodoapp.EditItemDialog.EditItemDialogListener;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,15 +14,21 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.pc.example.firsttodoapp.EditItemDialog.EditItemDialogListener;
+
+import java.util.ArrayList;
+
 
 public class MainActivity extends FragmentActivity implements EditItemDialogListener {
 
-	private ArrayList<String> items;
-	private ArrayAdapter<String> itemsAdapter;
+	private ArrayList<TodoItem> items;
+	private ArrayAdapter<TodoItem> itemsAdapter;
 	private ListView lvItems;
 	private EditText etNewItem;
 	private int updatedPosition;
 	private final int REQUEST_CODE = 1;
+    private static TodoItemDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,40 +38,28 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
         updatedPosition = -1;
         //populateArrayItems();
         readItems();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, items);
         lvItems.setAdapter(itemsAdapter);
         setUpListViewListener();
         
     }
-    
+
     private void readItems(){
-    	File filesDir = getFilesDir();
-    	File todoFile = new File(filesDir, "todo.txt");
-    	try {
-    		items = new ArrayList<String>(FileUtils.readLines(todoFile));
-    	} catch(IOException e) {
-    		items = new ArrayList<String>();
-    		e.printStackTrace();
-    	}
+        if(db == null)
+        {
+            db = new TodoItemDatabase(this);
+        }
+        items = (ArrayList<TodoItem>)db.getAllTodoItems();
     }
-    
-    private void saveItems() {
-    	File filesDir = getFilesDir();
-    	File todoFile = new File(filesDir, "todo.txt");
-    	try {
-    		FileUtils.writeLines(todoFile, items);
-    	} catch(IOException e) {
-    		e.printStackTrace();
-    	}
-    }
+
     private void setUpListViewListener() {
 		lvItems.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+                db.deleteTodoItem(items.get(position));
 				items.remove(position);
 				itemsAdapter.notifyDataSetChanged();
-				saveItems();
 				return true;
 			}
 		});
@@ -88,7 +74,7 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
 				//updatedPosition = position;
 				//startActivityForResult(i, REQUEST_CODE);
 				updatedPosition = position;
-				showEditDialog(items.get(position));
+				showEditDialog(items.get(position).getBody());
 			}
 		});
 		
@@ -124,9 +110,11 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
     		
     	if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
     		String updatedText = data.getExtras().getString("updatedItem");
-    	    items.set(updatedPosition, updatedText);
+            TodoItem item = items.get(updatedPosition);
+            db.updateTodoItem(item);
+            item.setBody(updatedText);
     	    itemsAdapter.notifyDataSetChanged();
-    	    saveItems();
+
     	  }
     }
     
@@ -134,9 +122,10 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
     	
     	String itemValue;
     	itemValue = etNewItem.getText().toString();
-    	items.add(itemValue);
+        TodoItem item = new TodoItem(itemValue, 1);
+        db.addTodoItem(item);
+    	items.add(item);
     	etNewItem.setText("");
-    	saveItems();
     }
     
     private void showEditDialog(String itemText) {
@@ -147,8 +136,10 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
 
 	@Override
 	public void onFinishEditDialog(String inputText) {
-		items.set(updatedPosition, inputText);
-	    itemsAdapter.notifyDataSetChanged();
-	    saveItems();
+
+        TodoItem item = items.get(updatedPosition);
+        db.updateTodoItem(item);
+        item.setBody(inputText);
+        itemsAdapter.notifyDataSetChanged();
 	}
 }
