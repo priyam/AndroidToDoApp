@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 public class MainActivity extends FragmentActivity implements EditItemDialogListener {
 
 	private ArrayList<TodoItem> items;
-	private ArrayAdapter<TodoItem> itemsAdapter;
+	private TodoItemAdapter itemsAdapter;
 	private ListView lvItems;
 	private EditText etNewItem;
 	private int updatedPosition;
@@ -38,7 +37,7 @@ public class MainActivity extends FragmentActivity implements EditItemDialogList
         updatedPosition = -1;
         //populateArrayItems();
         readItems();
-        itemsAdapter = new ArrayAdapter<TodoItem>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new TodoItemAdapter(this, items);
         lvItems.setAdapter(itemsAdapter);
         setUpListViewListener();
         
