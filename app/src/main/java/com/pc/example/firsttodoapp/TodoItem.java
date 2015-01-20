@@ -4,7 +4,8 @@ package com.pc.example.firsttodoapp;
  * Created by priyam on 1/17/15.
  */
 public class TodoItem {
-    private int id;
+
+    private long id;
     private String body;
     private int priority;
 
@@ -30,11 +31,11 @@ public class TodoItem {
         this.priority = priority;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

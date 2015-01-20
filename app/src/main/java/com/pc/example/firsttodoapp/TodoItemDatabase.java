@@ -40,7 +40,7 @@ public class TodoItemDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Construct a table for todo items
         String CREATE_TODO_TABLE = "CREATE TABLE " + TABLE_TODO + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_BODY + " TEXT,"
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_BODY + " TEXT,"
                 + KEY_PRIORITY + " INTEGER" + ")";
         db.execSQL(CREATE_TODO_TABLE);
     }
@@ -67,7 +67,7 @@ public class TodoItemDatabase extends SQLiteOpenHelper {
         values.put(KEY_BODY, item.getBody());
         values.put(KEY_PRIORITY, item.getPriority());
         // Insert Row
-        db.insert(TABLE_TODO, null, values);
+        item.setId(db.insert(TABLE_TODO, null, values));
         db.close(); // Closing database connection
     }
 
