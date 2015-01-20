@@ -50,7 +50,7 @@ public class EditItemDialog extends DialogFragment implements OnEditorActionList
 		// Show soft keyboard automatically
 		mEditText.requestFocus();
 		mEditText.setText(getArguments().getString("itemText"));
-		
+		mEditText.setSelection(mEditText.getText().length());
 		getDialog().getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		mEditText.setOnEditorActionListener(this);
